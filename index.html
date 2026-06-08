@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Ten Point Test — The Clubhouse Moorooka</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1208;
+    --cream: #f5f0e8;
+    --warm: #ede5d4;
+    --accent: #8b2635;
+    --gold: #c9973a;
+    --muted: #8a7f72;
+    --green: #2d6a4f;
+    --border: rgba(26,18,8,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+  }
+
+  /* ── TAB NAV ── */
+  .tab-nav {
+    background: var(--accent);
+    display: flex;
+    padding: 0 40px;
+    gap: 4px;
+    align-items: flex-end;
+  }
+  .tab-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    color: rgba(245,240,232,0.55);
+    background: rgba(0,0,0,0.15);
+    border: none; border-radius: 8px 8px 0 0;
+    padding: 12px 24px; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab-btn:hover { color: rgba(245,240,232,0.85); background: rgba(0,0,0,0.2); }
+  .tab-btn.active {
+    background: var(--cream);
+    color: var(--accent);
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--accent);
+    color: var(--cream);
+    padding: 36px 40px 36px;
+    position: relative; overflow: hidden;
+  }
+  .header::before {
+    content: ''; position: absolute;
+    top: -60px; right: -60px; width: 300px; height: 300px;
+    border-radius: 50%; background: rgba(255,255,255,0.04);
+  }
+  .header::after {
+    content: ''; position: absolute;
+    bottom: -40px; left: 30%; width: 200px; height: 200px;
+    border-radius: 50%; background: rgba(255,255,255,0.03);
+  }
+  .header-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; opacity: 0.6; margin-bottom: 10px; }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(26px, 4vw, 40px); font-weight: 900; line-height: 1.1; margin-bottom: 6px;
+  }
+  .header p { opacity: 0.75; font-size: 14px; max-width: 520px; line-height: 1.6; }
+
+  /* ── TAB PANELS ── */
+  .tab-panel { display: none; padding-bottom: 80px; }
+  .tab-panel.active { display: block; }
+  .wrap { max-width: 860px; }
+
+  /* ── SCORING TAB ── */
+  .idea-section { padding: 32px 40px 0; }
+  .field-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  .idea-input {
+    width: 100%; font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 700; color: var(--ink);
+    background: transparent; border: none; border-bottom: 2px solid var(--border);
+    padding: 8px 0 12px; outline: none; transition: border-color 0.2s;
+  }
+  .idea-input::placeholder { color: rgba(26,18,8,0.2); }
+  .idea-input:focus { border-color: var(--accent); }
+
+  .principles { padding: 24px 40px 0; display: flex; flex-direction: column; gap: 14px; }
+  .principle-card {
+    background: white; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 2px 8px rgba(26,18,8,0.06); transition: box-shadow 0.2s;
+  }
+  .principle-card:hover { box-shadow: 0 4px 16px rgba(26,18,8,0.1); }
+  .principle-header {
+    display: flex; align-items: center; gap: 16px;
+    padding: 18px 24px 14px; border-bottom: 1px solid var(--border);
+  }
+  .principle-number { font-family: 'Playfair Display', serif; font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; min-width: 24px; }
+  .principle-name { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 700; flex: 1; }
+  .principle-score-badge { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 900; min-width: 32px; text-align: right; transition: color 0.3s; color: var(--muted); }
+  .principle-score-badge.score-2 { color: var(--green); }
+  .principle-score-badge.score-1 { color: var(--gold); }
+  .criteria-list { padding: 4px 0; }
+  .criterion-row {
+    display: flex; align-items: center; gap: 16px; padding: 13px 24px;
+    border-bottom: 1px solid rgba(26,18,8,0.05);
+    cursor: pointer; transition: background 0.15s; user-select: none;
+  }
+  .criterion-row:last-child { border-bottom: none; }
+  .criterion-row:hover { background: var(--warm); }
+  .criterion-row.checked { background: #f0faf5; }
+  .criterion-check {
+    width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.2s; font-size: 12px; color: white;
+  }
+  .criterion-row.checked .criterion-check { background: var(--green); border-color: var(--green); }
+  .criterion-text { font-size: 14px; line-height: 1.5; color: var(--ink); opacity: 0.8; }
+  .criterion-row.checked .criterion-text { opacity: 1; font-weight: 500; }
+
+  .score-panel {
+    margin: 20px 40px 0; background: var(--ink); color: var(--cream);
+    border-radius: 12px; padding: 24px 32px;
+    display: flex; align-items: center; gap: 32px; flex-wrap: wrap;
+  }
+  .score-total-wrap { display: flex; align-items: baseline; gap: 6px; }
+  .score-total { font-family: 'Playfair Display', serif; font-size: 64px; font-weight: 900; line-height: 1; transition: color 0.3s; }
+  .score-denom { font-size: 24px; opacity: 0.4; font-family: 'Playfair Display', serif; }
+  .score-bar-wrap { flex: 1; min-width: 200px; }
+  .score-verdict { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; margin-bottom: 10px; transition: color 0.3s; }
+  .score-bar-track { height: 6px; background: rgba(255,255,255,0.12); border-radius: 3px; overflow: hidden; }
+  .score-bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s cubic-bezier(0.4,0,0.2,1), background 0.3s; width: 0%; }
+  .score-description { font-size: 13px; opacity: 0.55; margin-top: 8px; line-height: 1.5; }
+
+  .actions { padding: 16px 40px 0; display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--accent); color: white; font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500; letter-spacing: 0.5px;
+    padding: 12px 24px; border-radius: 8px; border: none; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-primary:hover { background: #a62d40; }
+  .btn-secondary {
+    background: none; color: var(--muted); font-family: 'DM Sans', sans-serif;
+    font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 12px 20px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  .session-section { padding: 36px 40px 0; }
+  .session-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
+  .session-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; }
+  .session-count { font-size: 12px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
+  .btn-export {
+    background: var(--green); color: white; font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500; padding: 10px 20px; border-radius: 8px;
+    border: none; cursor: pointer; transition: background 0.2s;
+  }
+  .btn-export:hover { background: #235a40; }
+  .session-table-wrap { overflow-x: auto; border-radius: 12px; }
+  .session-table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 8px rgba(26,18,8,0.06); }
+  .session-table th {
+    background: var(--ink); color: var(--cream); font-size: 10px; letter-spacing: 2px;
+    text-transform: uppercase; font-weight: 400; padding: 14px 16px; text-align: left; white-space: nowrap;
+  }
+  .session-table th:first-child { border-radius: 12px 0 0 0; }
+  .session-table th:last-child { border-radius: 0 12px 0 0; }
+  .session-table td { padding: 14px 16px; font-size: 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .session-table tr:last-child td { border-bottom: none; }
+  .session-table tbody tr:hover td { background: var(--warm); }
+  .idea-cell { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 15px; }
+  .score-cell { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 18px; text-align: center; }
+  .principle-cell { text-align: center; font-size: 13px; color: var(--muted); }
+  .principle-cell.full { color: var(--green); font-weight: 700; }
+  .principle-cell.half { color: var(--gold); font-weight: 500; }
+  .verdict-pill { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; letter-spacing: 0.5px; white-space: nowrap; }
+  .delete-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px; padding: 2px 8px; border-radius: 4px; transition: all 0.15s; line-height: 1; }
+  .delete-btn:hover { color: var(--accent); background: #fef0f0; }
+
+  /* ── SLIDE TAB ── */
+  #tab-slide {
+    background: #1a1208;
+    min-height: calc(100vh - 120px);
+    display: none;
+    padding: 48px 40px;
+    align-items: center;
+    justify-content: center;
+  }
+  #tab-slide.active { display: flex; flex-direction: column; }
+
+  .slide-frame {
+    width: 100%;
+    max-width: 1100px;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 32px 96px rgba(0,0,0,0.7);
+    border-radius: 4px;
+  }
+
+  /* The actual slide — fixed coordinate space */
+  .slide {
+    position: absolute; inset: 0;
+    background: #f5f0e8;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding: 0;
+  }
+
+  /* Left accent bar */
+  .slide::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0; width: 6px;
+    background: #8b2635;
+    z-index: 2;
+  }
+
+  /* ── SLIDE HEADER ── */
+  .slide-head {
+    padding: 4.5% 5% 0 5.5%;
+    display: flex; align-items: flex-start; justify-content: space-between;
+  }
+
+  .slide-eyebrow {
+    font-size: 0.68vw;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: #8b2635; font-weight: 500; margin-bottom: 0.4em;
+  }
+  .slide-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4vw; font-weight: 900;
+    color: #1a1208; line-height: 1;
+  }
+  .slide-sub {
+    font-size: 0.72vw; color: #8a7f72;
+    margin-top: 0.5em; line-height: 1.5; max-width: 44vw;
+  }
+  .slide-org {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.65vw; font-weight: 700;
+    color: #8a7f72; opacity: 0.5;
+    text-align: right; white-space: nowrap;
+    padding-top: 0.3em;
+  }
+
+  /* ── SLIDE GRID ── */
+  .slide-grid {
+    display: flex;
+    gap: 1%;
+    padding: 2.5% 5% 2% 5.5%;
+    align-items: stretch;
+  }
+
+  .slide-card {
+    flex: 1;
+    background: white;
+    border-radius: 6px;
+    padding: 4% 4% 4%;
+    display: grid;
+    /* row 0: icon | row 1: num | row 2: name | row 3: crit-1 | row 4: crit-2 */
+    grid-template-rows: 2.2vw 0.8vw 2.2vw 1fr 1fr;
+    row-gap: 0;
+    box-shadow: 0 1px 8px rgba(26,18,8,0.07);
+    position: relative;
+    overflow: hidden;
+  }
+  .slide-card::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+    background: #8b2635; opacity: 0.25;
+  }
+
+  .slide-icon {
+    display: flex; align-items: center;
+    margin-bottom: 0.6vw;
+  }
+  .slide-icon svg {
+    width: 1.6vw; height: 1.6vw;
+    stroke: #8b2635; fill: none;
+    stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+  }
+
+  .slide-num {
+    font-size: 0.55vw; letter-spacing: 0.2em;
+    text-transform: uppercase; color: #8b2635; font-weight: 700;
+    align-self: center;
+  }
+
+  .slide-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05vw; font-weight: 900;
+    color: #1a1208; line-height: 1.15;
+    align-self: center;
+    padding-top: 0.3vw;
+    border-top: 1px solid rgba(26,18,8,0.08);
+    margin-top: 0.3vw;
+  }
+
+  .slide-crit {
+    display: flex; align-items: flex-start; gap: 0.4vw;
+    padding-top: 0.6vw;
+    align-self: start;
+  }
+  .slide-crit-dot {
+    width: 0.3vw; height: 0.3vw; min-width: 0.3vw;
+    border-radius: 50%; background: #8b2635;
+    margin-top: 0.45em; opacity: 0.5; flex-shrink: 0;
+  }
+  .slide-crit-text {
+    font-size: 0.62vw; color: #8a7f72; line-height: 1.4;
+  }
+
+  /* ── SLIDE FOOTER ── */
+  .slide-foot {
+    padding: 0 5% 3% 5.5%;
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid rgba(26,18,8,0.1);
+    margin: 0 5% 0 5.5%;
+    padding-top: 1.5%;
+  }
+  .slide-foot-text {
+    font-size: 0.58vw; color: #8a7f72;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .slide-foot-score {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.7vw; font-weight: 900; color: #8b2635;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 32px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink); color: var(--cream);
+    padding: 12px 24px; border-radius: 8px; font-size: 13px;
+    opacity: 0; transition: all 0.3s; pointer-events: none;
+    white-space: nowrap; z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 600px) {
+    .tab-nav { padding: 0 20px; }
+    .header, .idea-section, .principles, .actions, .session-section { padding-left: 20px; padding-right: 20px; }
+    .score-panel { margin-left: 20px; margin-right: 20px; }
+    #tab-slide { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Shared header -->
+<div class="header">
+  <div class="header-label">The Clubhouse Moorooka</div>
+  <h1>The Ten Point Test</h1>
+  <p>Score any idea against our five principles — two points each, ten in total. Ideas must score 5 or above to be considered by the President.</p>
+</div>
+
+<!-- Tab nav -->
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('scoring')">Scoring Tool</button>
+  <button class="tab-btn" onclick="switchTab('slide')">Presentation View</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB 1 — SCORING TOOL
+══════════════════════════════════════════ -->
+<div class="tab-panel active" id="tab-scoring">
+
+  <div class="idea-section wrap">
+    <div class="field-label">Idea Name</div>
+    <input class="idea-input" type="text" placeholder="Name the idea you're evaluating…" id="ideaInput">
+  </div>
+
+  <div class="principles wrap" id="principles"></div>
+
+  <div class="score-panel wrap">
+    <div class="score-total-wrap">
+      <div class="score-total" id="scoreTotal">0</div>
+      <div class="score-denom">/ 10</div>
+    </div>
+    <div class="score-bar-wrap">
+      <div class="score-verdict" id="scoreVerdict">Score your idea</div>
+      <div class="score-bar-track">
+        <div class="score-bar-fill" id="scoreBarFill"></div>
+      </div>
+      <div class="score-description" id="scoreDescription">Tick each criterion that this idea satisfies.</div>
+    </div>
+  </div>
+
+  <div class="actions wrap">
+    <button class="btn-primary" onclick="addToSession()">+ Add to Session</button>
+    <button class="btn-secondary" onclick="resetAll()">↺ Reset</button>
+  </div>
+
+  <div class="session-section wrap" id="sessionSection" style="display:none">
+    <div class="session-header">
+      <div>
+        <div class="session-title">Session Results</div>
+        <div class="session-count" id="sessionCount"></div>
+      </div>
+      <button class="btn-export" onclick="exportCSV()">↓ Export to CSV</button>
+    </div>
+    <div class="session-table-wrap">
+      <table class="session-table">
+        <thead>
+          <tr>
+            <th>Idea</th>
+            <th style="text-align:center">CC</th>
+            <th style="text-align:center">BTB</th>
+            <th style="text-align:center">MM</th>
+            <th style="text-align:center">FF</th>
+            <th style="text-align:center">SS</th>
+            <th style="text-align:center">Score</th>
+            <th>Verdict</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="sessionBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- end tab-scoring -->
+
+<!-- ══════════════════════════════════════════
+     TAB 2 — PRESENTATION SLIDE
+══════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-slide">
+  <div class="slide-frame">
+    <div class="slide">
+
+      <div class="slide-head">
+        <div>
+          <div class="slide-eyebrow">The Clubhouse Moorooka — Strategic Framework</div>
+          <div class="slide-title">The Ten Point Test</div>
+          <div class="slide-sub">Every idea is scored against five principles — two points each, ten in total. Ideas must reach 5 or above to be considered by the President.</div>
+        </div>
+        <div class="slide-org">The Clubhouse<br>Moorooka</div>
+      </div>
+
+      <div class="slide-grid">
+
+        <!-- 01 Community Counts -->
+        <div class="slide-card">
+          <div class="slide-icon">
+            <svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="3"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="18" cy="8" r="2.5"/><path d="M21 21v-1.5a3.5 3.5 0 0 0-2.5-3.36"/></svg>
+          </div>
+          <div class="slide-num">01</div>
+          <div class="slide-name">Community Counts</div>
+          <div class="slide-crit">
+            <div class="slide-crit-dot"></div>
+            <div class="slide-crit-text">Does it serve people beyond just paying patrons?</div>
+          </div>
+          <div class="slide-crit">
+            <div class="slide-crit-dot"></div>
+            <div class="slide-crit-text">Does it appeal to more than one community group?</div>
+          </div>
+        </div>
+
+        <!-- 02 Beyond the Bar -->
+        <div class="slide-card">
+          <div class="slide-icon">
+            <svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+          </div>
+          <div class="slide-num">02</div>
+          <div class="slide-name">Beyond the Bar</div>
+          <div class="slide-crit">
+            <div class="slide-crit-dot"></div>
+            <div class="slide-crit-text">Does it contribute to a revenue pillar other than the bar?</div>
+          </div>
+          <div class="slide-crit">
+            <div class="slide-crit-dot"></div>
+            <div class="slide-crit-text">Does it reduce our dependence on Friday/Saturday trade?</div>
+          </div>
+        </div>
+
+        <!-- 03 Members Matter -->
+        <div class="slide-card">
+          <div class="slide-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4V2M17 4V2M3 10h18"/><circle cx="8.5" cy="15" r="1"/><circle cx="12" cy="15" r="1"/><circle cx="15.5" cy="15" r="1"/></svg>
+          </div>
+          <div class="slide-num">03</div>
+          <div class="slide-name">Members Matter</div>
+          <div class="slide-crit">
+            <div class="slide-crit-dot"></div>
+            <div class="slide-crit-text">Does it give existing members a reason to show up?</div>
+          </div>
+          <div class="slide-crit">
+            <div class="slide-crit-dot"></div>
+            <div class="slide-crit-text">Does it give non-members a reason to join?</div>
+          </div>
+        </div>
+
+        <!-- 04 Fill the Floor -->
+        <div class="slide-card">
+          <div class="slide-icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M2 9h20M9 21V9"/></svg>
+          </div>
+          <div class="slide-num">04</div>
+          <div class="slide-name">Fill the Floor</div>
+          <div class="slide-crit">
+            <div class="slide-crit-dot"></div>
+            <div class="slide-crit-text">Does it bring people into a part of the venue that is currently underused?</div>
+          </div>
+          <div class="slide-crit">
+            <div class="slide-crit-dot"></div>
+            <div class="slide-crit-text">Does it make use of a space that is currently sitting idle?</div>
+          </div>
+        </div>
+
+        <!-- 05 Self-Sufficient -->
+        <div class="slide-card">
+          <div class="slide-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <div class="slide-num">05</div>
+          <div class="slide-name">Self-Sufficient</div>
+          <div class="slide-crit">
+            <div class="slide-crit-dot"></div>
+            <div class="slide-crit-text">Can it operate without ongoing volunteer effort?</div>
+          </div>
+          <div class="slide-crit">
+            <div class="slide-crit-dot"></div>
+            <div class="slide-crit-text">Can it cover its own costs within 12 months?</div>
+          </div>
+        </div>
+
+      </div><!-- slide-grid -->
+
+      <div class="slide-foot">
+        <div class="slide-foot-text">Score 0–2 per principle &nbsp;·&nbsp; 5 or above progresses to the President &nbsp;·&nbsp; Maximum score 10</div>
+        <div class="slide-foot-score">/ 10</div>
+      </div>
+
+    </div><!-- slide -->
+  </div><!-- slide-frame -->
+</div><!-- end tab-slide -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── TAB SWITCHING ── */
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', (i === 0 && tab === 'scoring') || (i === 1 && tab === 'slide')));
+  document.getElementById('tab-scoring').classList.toggle('active', tab === 'scoring');
+  document.getElementById('tab-slide').classList.toggle('active', tab === 'slide');
+}
+
+/* ── DATA ── */
+const principles = [
+  { number: "01", name: "Community Counts", short: "CC",
+    criteria: ["Does it serve people beyond just paying patrons?", "Does it appeal to more than one community group?"] },
+  { number: "02", name: "Beyond the Bar", short: "BTB",
+    criteria: ["Does it contribute to a revenue pillar other than the bar?", "Does it reduce our dependence on Friday/Saturday trade?"] },
+  { number: "03", name: "Members Matter", short: "MM",
+    criteria: ["Does it give existing members a reason to show up?", "Does it give non-members a reason to join?"] },
+  { number: "04", name: "Fill the Floor", short: "FF",
+    criteria: ["Does it bring people into an area of the venue that is currently underused?", "Does it make use of a part of the venue that is currently sitting idle?"] },
+  { number: "05", name: "Self-Sufficient", short: "SS",
+    criteria: ["Can it operate without ongoing volunteer effort?", "Can it cover its own costs within 12 months?"] }
+];
+
+const state = principles.map(() => [false, false]);
+const session = [];
+const VAR_GOLD = "#c9973a";
+
+function getVerdict(score) {
+  if (score >= 9) return { text: "Strong Yes",      color: "#2d6a4f", bg: "rgba(45,106,79,0.1)" };
+  if (score >= 7) return { text: "Worth Pursuing",  color: "#2d6a4f", bg: "rgba(45,106,79,0.07)" };
+  if (score >= 5) return { text: "Passes the Test", color: "#7a6010", bg: "rgba(201,151,58,0.15)" };
+  if (score >= 3) return { text: "Below the Line",  color: "#8b2635", bg: "rgba(139,38,53,0.1)" };
+  return             { text: "Not Right Now",    color: "#8b2635", bg: "rgba(139,38,53,0.08)" };
+}
+function getScoreColor(score) {
+  if (score >= 7) return "#2d6a4f";
+  if (score >= 5) return VAR_GOLD;
+  return "#8b2635";
+}
+function getDesc(score) {
+  if (score >= 9) return "Exceptional alignment. Take this to the President — it's a priority.";
+  if (score >= 7) return "Solid across most principles. Ready to present to the President for consideration.";
+  if (score >= 5) return "Meets the threshold. Eligible to be considered by the President — refine before presenting.";
+  if (score >= 3) return "Scores below 5 — not eligible for consideration. Revisit the idea or set it aside.";
+  return "Scores below 5 — not eligible for consideration. This idea doesn't align with our current direction.";
+}
+
+function render() {
+  const container = document.getElementById('principles');
+  container.innerHTML = '';
+  principles.forEach((p, pi) => {
+    const ps = state[pi].filter(Boolean).length;
+    const badgeClass = ps === 2 ? 'score-2' : ps === 1 ? 'score-1' : '';
+    const card = document.createElement('div');
+    card.className = 'principle-card';
+    card.innerHTML = `
+      <div class="principle-header">
+        <div class="principle-number">${p.number}</div>
+        <div class="principle-name">${p.name}</div>
+        <div class="principle-score-badge ${badgeClass}">${ps}</div>
+      </div>
+      <div class="criteria-list">
+        ${p.criteria.map((c, ci) => `
+          <div class="criterion-row ${state[pi][ci] ? 'checked' : ''}" onclick="toggle(${pi},${ci})">
+            <div class="criterion-check">${state[pi][ci] ? '✓' : ''}</div>
+            <div class="criterion-text">${c}</div>
+          </div>`).join('')}
+      </div>`;
+    container.appendChild(card);
+  });
+  updateScore();
+}
+
+function updateScore() {
+  const total = state.flat().filter(Boolean).length;
+  const verdict = getVerdict(total);
+  const scoreColor = getScoreColor(total);
+  document.getElementById('scoreTotal').textContent = total;
+  document.getElementById('scoreTotal').style.color = scoreColor;
+  document.getElementById('scoreVerdict').textContent = verdict.text;
+  document.getElementById('scoreVerdict').style.color = scoreColor;
+  document.getElementById('scoreDescription').textContent = getDesc(total);
+  document.getElementById('scoreBarFill').style.width = (total / 10 * 100) + '%';
+  document.getElementById('scoreBarFill').style.background = scoreColor;
+}
+
+function toggle(pi, ci) { state[pi][ci] = !state[pi][ci]; render(); }
+
+function resetAll() {
+  state.forEach(p => { p[0] = false; p[1] = false; });
+  document.getElementById('ideaInput').value = '';
+  render();
+}
+
+function addToSession() {
+  const name = document.getElementById('ideaInput').value.trim();
+  if (!name) { showToast('Please enter an idea name first.'); return; }
+  const scores = state.map(p => p.filter(Boolean).length);
+  const total = scores.reduce((a, b) => a + b, 0);
+  const now = new Date();
+  session.push({ name, scores, total, time: now.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' }) });
+  renderSession();
+  resetAll();
+  showToast(`"${name}" added to session.`);
+}
+
+function removeFromSession(i) { session.splice(i, 1); renderSession(); }
+
+function renderSession() {
+  const section = document.getElementById('sessionSection');
+  if (session.length === 0) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  document.getElementById('sessionCount').textContent = `${session.length} idea${session.length !== 1 ? 's' : ''} scored this session`;
+  document.getElementById('sessionBody').innerHTML = session.map((item, i) => {
+    const verdict = getVerdict(item.total);
+    const scoreColor = getScoreColor(item.total);
+    const pCells = item.scores.map(s => `<td class="principle-cell ${s===2?'full':s===1?'half':''}">${s}</td>`).join('');
+    return `<tr>
+      <td class="idea-cell">${item.name}</td>
+      ${pCells}
+      <td class="score-cell" style="color:${scoreColor}">${item.total}</td>
+      <td><span class="verdict-pill" style="background:${verdict.bg};color:${verdict.color}">${verdict.text}</span></td>
+      <td><button class="delete-btn" onclick="removeFromSession(${i})" title="Remove">×</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function exportCSV() {
+  if (session.length === 0) return;
+  const headers = ['Idea','Community Counts /2','Beyond the Bar /2','Members Matter /2','Fill the Floor /2','Self-Sufficient /2','Total /10','Verdict','Time'];
+  const rows = session.map(item => {
+    const verdict = getVerdict(item.total);
+    return [`"${item.name}"`, ...item.scores, item.total, `"${verdict.text}"`, `"${item.time}"`].join(',');
+  });
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `moorooka-ten-point-test-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Exported to CSV.');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+render();
+</script>
+</body>
+</html>
