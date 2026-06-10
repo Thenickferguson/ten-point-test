@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Join The Clubhouse Moorooka</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1208;
+    --cream: #f5f0e8;
+    --warm: #ede5d4;
+    --accent: #8b2635;
+    --gold: #c9973a;
+    --muted: #8a7f72;
+    --green: #2d6a4f;
+    --border: rgba(26,18,8,0.14);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--accent);
+    color: var(--cream);
+    padding: 28px 24px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .header::before {
+    content: ''; position: absolute;
+    top: -50px; right: -50px; width: 200px; height: 200px;
+    border-radius: 50%; background: rgba(255,255,255,0.04);
+  }
+  .header-eyebrow {
+    font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    opacity: 0.6; margin-bottom: 8px;
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px; font-weight: 900; line-height: 1.1; margin-bottom: 6px;
+  }
+  .header p {
+    font-size: 13px; opacity: 0.75; line-height: 1.6; max-width: 300px; margin: 0 auto;
+  }
+
+  /* ── OFFER BANNER ── */
+  .offer-banner {
+    background: var(--ink);
+    color: var(--cream);
+    text-align: center;
+    padding: 14px 24px;
+    font-size: 13px;
+    line-height: 1.5;
+    flex-shrink: 0;
+  }
+  .offer-banner strong {
+    font-weight: 500;
+    color: var(--gold);
+  }
+
+  /* ── FORM PANEL ── */
+  .form-panel {
+    flex: 1;
+    padding: 28px 24px 40px;
+    max-width: 480px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .price-badge {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 24px;
+  }
+  .price-amount {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px; font-weight: 900; line-height: 1;
+  }
+  .price-label {
+    font-size: 13px; color: var(--muted); line-height: 1.4;
+  }
+
+  .field-group { margin-bottom: 18px; }
+  .field-label {
+    font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--muted); display: block; margin-bottom: 8px;
+  }
+  .field-input {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px; font-weight: 400;
+    color: var(--ink);
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  .field-input::placeholder { color: rgba(26,18,8,0.25); }
+  .field-input:focus { border-color: var(--accent); }
+
+  .field-row { display: flex; gap: 12px; }
+  .field-row .field-group { flex: 1; }
+
+  .consent-group { margin-bottom: 24px; }
+  .consent-label {
+    display: flex; align-items: flex-start; gap: 12px;
+    cursor: pointer; user-select: none;
+  }
+  .consent-check {
+    width: 22px; height: 22px; min-width: 22px;
+    border: 1.5px solid var(--border); border-radius: 6px;
+    background: white; margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; font-size: 13px; color: white;
+    flex-shrink: 0;
+  }
+  .consent-checkbox { display: none; }
+  .consent-checkbox:checked + .consent-label .consent-check {
+    background: var(--green); border-color: var(--green);
+  }
+  .consent-text { font-size: 13px; line-height: 1.6; color: var(--ink); opacity: 0.75; }
+  .consent-text a { color: var(--accent); text-decoration: none; }
+
+  .btn-join {
+    width: 100%;
+    background: var(--accent);
+    color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 500; letter-spacing: 0.3px;
+    padding: 17px 24px;
+    border-radius: 12px; border: none; cursor: pointer;
+    transition: background 0.2s;
+    margin-bottom: 14px;
+  }
+  .btn-join:hover { background: #a62d40; }
+  .btn-join:disabled { background: var(--muted); cursor: not-allowed; }
+
+  .fine-print {
+    font-size: 11px; color: var(--muted); text-align: center; line-height: 1.6;
+  }
+  .fine-print a { color: var(--muted); text-decoration: underline; }
+
+  /* ── CONFIRMATION SCREEN ── */
+  .confirm-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: var(--ink);
+    color: var(--cream);
+    padding: 40px 28px;
+    text-align: center;
+  }
+  .confirm-screen.show { display: flex; }
+
+  .confirm-tick {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: var(--green);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 24px;
+    font-size: 32px;
+  }
+  .confirm-eyebrow {
+    font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    opacity: 0.45; margin-bottom: 10px;
+  }
+  .confirm-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px; font-weight: 900; margin-bottom: 10px; line-height: 1.1;
+  }
+  .confirm-sub {
+    font-size: 14px; opacity: 0.65; line-height: 1.7; max-width: 280px; margin-bottom: 32px;
+  }
+
+  .confirm-voucher {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    padding: 22px 28px;
+    width: 100%; max-width: 320px;
+    margin-bottom: 32px;
+  }
+  .voucher-label {
+    font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 10px;
+  }
+  .voucher-line {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px; font-weight: 700; margin-bottom: 4px;
+  }
+  .voucher-time {
+    font-size: 12px; opacity: 0.45; margin-top: 10px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .confirm-note {
+    font-size: 12px; opacity: 0.4; line-height: 1.6; max-width: 260px;
+  }
+
+  /* Loading spinner */
+  .spinner {
+    display: none;
+    width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 0 auto;
+  }
+  .btn-join.loading .btn-text { display: none; }
+  .btn-join.loading .spinner { display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Error message */
+  .error-msg {
+    display: none;
+    background: rgba(139,38,53,0.08);
+    border: 1px solid rgba(139,38,53,0.2);
+    color: var(--accent);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .error-msg.show { display: block; }
+</style>
+</head>
+<body>
+
+<!-- ── SIGN-UP FORM ── -->
+<div id="formView">
+
+  <div class="header">
+    <div class="header-eyebrow">The Clubhouse Moorooka</div>
+    <h1>Join the Club</h1>
+    <p>Become a Casual Crew member for $10 — your first drink is on us.</p>
+  </div>
+
+  <div class="offer-banner">
+    Join tonight and your <strong>$10 membership = your first drink</strong>. Show your confirmation screen to bar staff.
+  </div>
+
+  <div class="form-panel">
+
+    <div class="price-badge">
+      <div class="price-amount">$10</div>
+      <div class="price-label">Casual Crew<br>membership</div>
+    </div>
+
+    <form name="membership" netlify netlify-honeypot="bot-field" id="joinForm" novalidate>
+      <input type="hidden" name="form-name" value="membership">
+      <p style="display:none"><input name="bot-field"></p>
+
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label" for="firstName">First name</label>
+          <input class="field-input" type="text" id="firstName" name="firstName"
+            placeholder="Sam" autocomplete="given-name" required>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="lastName">Last name</label>
+          <input class="field-input" type="text" id="lastName" name="lastName"
+            placeholder="Smith" autocomplete="family-name" required>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="email">Email</label>
+        <input class="field-input" type="email" id="email" name="email"
+          placeholder="sam@example.com" autocomplete="email" inputmode="email" required>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="mobile">Mobile</label>
+        <input class="field-input" type="tel" id="mobile" name="mobile"
+          placeholder="04xx xxx xxx" autocomplete="tel" inputmode="tel" required>
+      </div>
+
+      <div class="consent-group">
+        <input class="consent-checkbox" type="checkbox" id="consent" name="consent" required>
+        <label class="consent-label" for="consent">
+          <div class="consent-check" id="consentCheck">✓</div>
+          <span class="consent-text">I agree to receive updates from The Clubhouse Moorooka and accept the <a href="#" onclick="return false">membership rules</a>.</span>
+        </label>
+      </div>
+
+      <div class="error-msg" id="errorMsg">Please fill in all fields and accept the membership terms.</div>
+
+      <button class="btn-join" type="submit" id="submitBtn">
+        <span class="btn-text">Join for $10 →</span>
+        <span class="spinner"></span>
+      </button>
+
+      <div class="fine-print">
+        Your $10 membership is processed at the bar.<br>
+        A confirmation email will be sent to you shortly.
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<!-- ── CONFIRMATION SCREEN ── -->
+<div class="confirm-screen" id="confirmScreen">
+  <div class="confirm-tick">✓</div>
+  <div class="confirm-eyebrow">The Clubhouse Moorooka</div>
+  <div class="confirm-name" id="confirmName">Welcome, Sam.</div>
+  <div class="confirm-sub">You're now a Casual Crew member. Show the screen below to bar staff to claim your first drink.</div>
+
+  <div class="confirm-voucher">
+    <div class="voucher-label">First drink on us</div>
+    <div class="voucher-line">Casual Crew — New Member</div>
+    <div class="voucher-line" id="voucherName"></div>
+    <div class="voucher-time" id="voucherTime"></div>
+  </div>
+
+  <div class="confirm-note">A confirmation email is on its way. Keep it for your records.</div>
+</div>
+
+<script>
+  // Sync checkbox visual state
+  document.getElementById('consent').addEventListener('change', function() {
+    const check = document.getElementById('consentCheck');
+    check.style.background = this.checked ? 'var(--green)' : '';
+    check.style.borderColor = this.checked ? 'var(--green)' : '';
+    check.style.color = this.checked ? 'white' : 'transparent';
+  });
+  // Init checkbox visual
+  document.getElementById('consentCheck').style.color = 'transparent';
+
+  document.getElementById('joinForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const firstName = document.getElementById('firstName').value.trim();
+    const lastName  = document.getElementById('lastName').value.trim();
+    const email     = document.getElementById('email').value.trim();
+    const mobile    = document.getElementById('mobile').value.trim();
+    const consent   = document.getElementById('consent').checked;
+    const errorMsg  = document.getElementById('errorMsg');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // Validate
+    if (!firstName || !lastName || !email || !mobile || !consent) {
+      errorMsg.classList.add('show');
+      return;
+    }
+    errorMsg.classList.remove('show');
+
+    // Loading state
+    submitBtn.classList.add('loading');
+    submitBtn.disabled = true;
+
+    // Submit to Netlify Forms
+    const data = new FormData(this);
+    fetch('/', { method: 'POST', body: data })
+      .then(() => showConfirmation(firstName, lastName))
+      .catch(() => showConfirmation(firstName, lastName)); // Show confirmation regardless — don't penalise user for network hiccup
+  });
+
+  function showConfirmation(firstName, lastName) {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', hour12: true });
+    const dateStr = now.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+    document.getElementById('confirmName').textContent = `Welcome, ${firstName}.`;
+    document.getElementById('voucherName').textContent = `${firstName} ${lastName}`;
+    document.getElementById('voucherTime').textContent = `Joined ${dateStr} at ${timeStr}`;
+
+    document.getElementById('formView').style.display = 'none';
+    document.getElementById('confirmScreen').classList.add('show');
+  }
+</script>
+</body>
+</html>
