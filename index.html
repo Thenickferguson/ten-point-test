@@ -192,6 +192,8 @@
   .verdict-pill { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; letter-spacing: 0.5px; white-space: nowrap; }
   .delete-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px; padding: 2px 8px; border-radius: 4px; transition: all 0.15s; line-height: 1; }
   .delete-btn:hover { color: var(--accent); background: #fef0f0; }
+  .print-btn { background: none; border: 1px solid var(--border); color: var(--muted); cursor: pointer; font-size: 12px; padding: 4px 10px; border-radius: 4px; transition: all 0.15s; font-family: 'DM Sans', sans-serif; white-space: nowrap; }
+  .print-btn:hover { border-color: var(--accent); color: var(--accent); background: #fff5f6; }
 
   /* ── SLIDE TAB ── */
   #tab-slide {
@@ -659,7 +661,8 @@ function addToSession() {
   const scores = state.map(p => p.filter(Boolean).length);
   const total = scores.reduce((a, b) => a + b, 0);
   const now = new Date();
-  session.push({ name, scores, total, comments: [...comments], time: now.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' }) });
+  const checks = state.map(p => [...p]);
+  session.push({ name, scores, checks, total, comments: [...comments], time: now.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' }), date: now.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }) });
   renderSession();
   resetAll();
   showToast(`"${name}" added to session.`);
@@ -682,7 +685,10 @@ function renderSession() {
       ${pCells}
       <td class="score-cell" style="color:${scoreColor}">${item.total}</td>
       <td><span class="verdict-pill" style="background:${verdict.bg};color:${verdict.color}">${verdict.text}</span></td>
-      <td><button class="delete-btn" onclick="removeFromSession(${i})" title="Remove">×</button></td>
+      <td style="white-space:nowrap">
+        <button class="print-btn" onclick="printIdea(${i})">↓ PDF</button>
+        <button class="delete-btn" onclick="removeFromSession(${i})" title="Remove">×</button>
+      </td>
     </tr>
     ${item.comments.some(c => c) ? `<tr style="background:var(--warm)">
       <td colspan="2" style="padding:0 16px 10px 16px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Notes</td>
@@ -709,6 +715,79 @@ function exportCSV() {
   a.click();
   URL.revokeObjectURL(url);
   showToast('Exported to CSV.');
+}
+
+function printIdea(i) {
+  const item = session[i];
+  const verdict = getVerdict(item.total);
+  const scoreColor = getScoreColor(item.total);
+
+  const principlesHTML = principles.map((p, pi) => {
+    const score = item.scores[pi];
+    const scoreCol = score === 2 ? '#2d6a4f' : score === 1 ? '#c9973a' : '#bcb8b1';
+    const comment = (item.comments && item.comments[pi]) ? item.comments[pi] : '';
+    const criteriaHTML = p.criteria.map((c, ci) => {
+      const checked = item.checks && item.checks[pi][ci];
+      return `<div style="display:flex;align-items:flex-start;gap:8px;padding:3px 0;font-size:10.5px;color:#1a1208;opacity:${checked ? '1' : '0.5'}">
+        <div style="width:13px;height:13px;border-radius:50%;border:1.5px solid ${checked ? '#2d6a4f' : '#ccc'};background:${checked ? '#2d6a4f' : 'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-size:8px;color:white;line-height:1">${checked ? '✓' : ''}</div>
+        <div style="line-height:1.45">${c}</div>
+      </div>`;
+    }).join('');
+    const commentHTML = comment ? `<div style="margin:6px 14px 10px;padding:7px 10px;background:#f5f0e8;border-left:2px solid #8b2635;font-size:10px;font-style:italic;color:#1a1208;line-height:1.5">
+      <div style="font-style:normal;font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;color:#8b2635;font-weight:700;margin-bottom:3px">Notes</div>${comment}</div>` : '';
+    return `<div style="background:white;border-radius:6px;margin-bottom:7px;border:0.5px solid rgba(26,18,8,0.1);overflow:hidden;page-break-inside:avoid">
+      <div style="display:flex;align-items:center;gap:10px;padding:9px 14px 8px;border-bottom:0.5px solid rgba(26,18,8,0.08)">
+        <div style="font-size:8.5px;font-weight:700;color:#8b2635;letter-spacing:2px;text-transform:uppercase;min-width:18px">${p.number}</div>
+        <div style="font-family:'Playfair Display',Georgia,serif;font-size:13px;font-weight:700;flex:1;color:#1a1208">${p.name}</div>
+        <div style="font-family:'Playfair Display',Georgia,serif;font-size:17px;font-weight:900;color:${scoreCol}">${score}</div>
+      </div>
+      <div style="padding:6px 14px 4px">${criteriaHTML}</div>
+      ${commentHTML}
+    </div>`;
+  }).join('');
+
+  const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<title>Ten Point Test — ${item.name}</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4 portrait; margin: 14mm 16mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f5f0e8; font-family: Arial, Helvetica, sans-serif; font-size: 11px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  @media screen { body { max-width: 210mm; margin: 0 auto; padding: 10mm; } }
+</style>
+</head><body>
+<div style="background:#8b2635;color:#f5f0e8;padding:18px 22px 16px;display:flex;justify-content:space-between;align-items:flex-start;position:relative;border-radius:6px 6px 0 0;margin-bottom:0">
+  <div style="position:absolute;left:0;top:0;bottom:0;width:5px;background:#c9973a;border-radius:6px 0 0 0"></div>
+  <div style="padding-left:6px">
+    <div style="font-size:8px;letter-spacing:2.5px;text-transform:uppercase;opacity:0.6;margin-bottom:5px">The Clubhouse Moorooka — Ten Point Test</div>
+    <div style="font-family:'Playfair Display',Georgia,serif;font-size:22px;font-weight:900;line-height:1.1;margin-bottom:4px">${item.name}</div>
+    <div style="font-size:9.5px;opacity:0.6">Scored ${item.date} · ${item.time}</div>
+  </div>
+  <div style="text-align:right;flex-shrink:0;padding-left:16px">
+    <div style="font-family:'Playfair Display',Georgia,serif;font-size:42px;font-weight:900;line-height:1;color:#c9973a">${item.total}<span style="font-size:14px;opacity:0.4">/10</span></div>
+    <div style="font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;color:#c9973a;margin-top:3px">${verdict.text}</div>
+  </div>
+</div>
+<div style="background:#f5f0e8;padding:14px 0 0">
+  ${principlesHTML}
+  <div style="background:#1a1208;color:#f5f0e8;border-radius:6px;padding:13px 16px;display:flex;align-items:center;gap:16px;margin-top:4px;page-break-inside:avoid">
+    <div style="font-family:'Playfair Display',Georgia,serif;font-size:34px;font-weight:900;color:#c9973a;line-height:1">${item.total}<span style="font-size:13px;opacity:0.35">/10</span></div>
+    <div style="flex:1">
+      <div style="font-family:'Playfair Display',Georgia,serif;font-size:14px;font-weight:700;color:#c9973a;margin-bottom:3px">${verdict.text}</div>
+      <div style="font-size:10px;opacity:0.55;line-height:1.5">${getDesc(item.total)}</div>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;padding:10px 2px 0;font-size:8.5px;color:#8a7f72;border-top:0.5px solid rgba(26,18,8,0.1);margin-top:10px">
+    <span>The Clubhouse Moorooka · Third Place Group Inc.</span>
+    <span>clubhousemoorookatpt.netlify.app</span>
+  </div>
+</div>
+</body></html>`;
+
+  const w = window.open('', '_blank', 'width=794,height=1123');
+  w.document.write(html);
+  w.document.close();
+  w.onload = () => { w.focus(); w.print(); };
 }
 
 function showToast(msg) {
