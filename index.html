@@ -125,6 +125,16 @@
   .criterion-text { font-size: 14px; line-height: 1.5; color: var(--ink); opacity: 0.8; }
   .criterion-row.checked .criterion-text { opacity: 1; font-weight: 500; }
 
+  .comment-wrap { padding: 12px 24px 16px; border-top: 1px solid rgba(26,18,8,0.05); }
+  .comment-input {
+    width: 100%; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 300;
+    color: var(--ink); background: var(--cream); border: 1.5px solid var(--border);
+    border-radius: 8px; padding: 10px 14px; outline: none; resize: none;
+    transition: border-color 0.2s; line-height: 1.5; min-height: 56px;
+  }
+  .comment-input::placeholder { color: rgba(26,18,8,0.3); }
+  .comment-input:focus { border-color: var(--accent); }
+
   .score-panel {
     margin: 20px 40px 0; background: var(--ink); color: var(--cream);
     border-radius: 12px; padding: 24px 32px;
@@ -568,6 +578,7 @@ const principles = [
 ];
 
 const state = principles.map(() => [false, false]);
+const comments = principles.map(() => '');
 const session = [];
 const VAR_GOLD = "#c9973a";
 
@@ -611,6 +622,9 @@ function render() {
             <div class="criterion-check">${state[pi][ci] ? '✓' : ''}</div>
             <div class="criterion-text">${c}</div>
           </div>`).join('')}
+      </div>
+      <div class="comment-wrap">
+        <textarea class="comment-input" rows="2" placeholder="Notes on this principle (optional)…" oninput="comments[${pi}]=this.value">${comments[pi]}</textarea>
       </div>`;
     container.appendChild(card);
   });
@@ -634,6 +648,7 @@ function toggle(pi, ci) { state[pi][ci] = !state[pi][ci]; render(); }
 
 function resetAll() {
   state.forEach(p => { p[0] = false; p[1] = false; });
+  comments.forEach((_, i) => { comments[i] = ''; });
   document.getElementById('ideaInput').value = '';
   render();
 }
@@ -644,7 +659,7 @@ function addToSession() {
   const scores = state.map(p => p.filter(Boolean).length);
   const total = scores.reduce((a, b) => a + b, 0);
   const now = new Date();
-  session.push({ name, scores, total, time: now.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' }) });
+  session.push({ name, scores, total, comments: [...comments], time: now.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' }) });
   renderSession();
   resetAll();
   showToast(`"${name}" added to session.`);
@@ -661,22 +676,29 @@ function renderSession() {
     const verdict = getVerdict(item.total);
     const scoreColor = getScoreColor(item.total);
     const pCells = item.scores.map(s => `<td class="principle-cell ${s===2?'full':s===1?'half':''}">${s}</td>`).join('');
+    const notesCells = item.comments.map(c => `<td class="principle-cell" style="font-size:12px;color:var(--muted);text-align:left;max-width:120px" title="${c.replace(/"/g,'&quot;')}">${c ? '📝 ' + (c.length > 30 ? c.slice(0,30) + '…' : c) : ''}</td>`).join('');
     return `<tr>
       <td class="idea-cell">${item.name}</td>
       ${pCells}
       <td class="score-cell" style="color:${scoreColor}">${item.total}</td>
       <td><span class="verdict-pill" style="background:${verdict.bg};color:${verdict.color}">${verdict.text}</span></td>
       <td><button class="delete-btn" onclick="removeFromSession(${i})" title="Remove">×</button></td>
-    </tr>`;
+    </tr>
+    ${item.comments.some(c => c) ? `<tr style="background:var(--warm)">
+      <td colspan="2" style="padding:0 16px 10px 16px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Notes</td>
+      ${item.comments.map((c, ci) => `<td colspan="1" style="padding:0 16px 10px;font-size:12px;color:var(--ink);opacity:0.7" title="${principles[ci].name}">${c || '—'}</td>`).join('')}
+      <td colspan="3"></td>
+    </tr>` : ''}`;
   }).join('');
 }
 
 function exportCSV() {
   if (session.length === 0) return;
-  const headers = ['Idea','Community Counts /2','Beyond the Bar /2','Members Matter /2','Fill the Floor /2','Self-Sufficient /2','Total /10','Verdict','Time'];
+  const headers = ['Idea','CC /2','BTB /2','MM /2','FF /2','SS /2','Total /10','Verdict','Time','CC Notes','BTB Notes','MM Notes','FF Notes','SS Notes'];
   const rows = session.map(item => {
     const verdict = getVerdict(item.total);
-    return [`"${item.name}"`, ...item.scores, item.total, `"${verdict.text}"`, `"${item.time}"`].join(',');
+    const notesCols = item.comments.map(c => `"${c.replace(/"/g,'""')}"`);
+    return [`"${item.name}"`, ...item.scores, item.total, `"${verdict.text}"`, `"${item.time}"`, ...notesCols].join(',');
   });
   const csv = [headers.join(','), ...rows].join('\n');
   const blob = new Blob([csv], { type: 'text/csv' });
