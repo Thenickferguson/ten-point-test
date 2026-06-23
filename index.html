@@ -378,6 +378,7 @@
 <div class="tab-nav">
   <button class="tab-btn active" onclick="switchTab('scoring')">Scoring Tool</button>
   <button class="tab-btn" onclick="switchTab('slide')">Presentation View</button>
+  <button class="tab-btn" onclick="switchTab('sandbox')">Sandbox</button>
 </div>
 
 <!-- ══════════════════════════════════════════
@@ -555,6 +556,45 @@
   </div><!-- slide-frame -->
 </div><!-- end tab-slide -->
 
+<!-- ══════════════════════════════════════════
+     TAB 3 — SANDBOX
+══════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-sandbox">
+  <div style="padding: 36px 40px 0; max-width: 860px;">
+    <div style="margin-bottom: 28px;">
+      <div class="field-label">Prototypes &amp; experiments</div>
+      <div style="font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; margin-bottom: 8px;">Sandbox</div>
+      <p style="font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 520px;">A holding area for new ideas before they're ready to ship. Each card links to a live prototype — test it, break it, give feedback.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; padding-bottom: 60px;">
+
+      <!-- Membership sign-up -->
+      <a href="/join" target="_blank" style="text-decoration: none;">
+        <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(26,18,8,0.06); transition: box-shadow 0.2s; cursor: pointer; height: 100%;" onmouseover="this.style.boxShadow='0 4px 16px rgba(26,18,8,0.12)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(26,18,8,0.06)'">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+            <div style="background: rgba(139,38,53,0.08); color: var(--accent); font-size: 10px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 10px; border-radius: 20px;">Prototype</div>
+            <div style="font-size: 18px; color: var(--muted); opacity: 0.4;">↗</div>
+          </div>
+          <div style="font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 8px;">Membership Sign-Up</div>
+          <p style="font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 16px;">Mobile-first sign-up flow for bar and event use. Designed to complete in under 60 seconds.</p>
+          <div style="font-size: 11px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 12px; display: flex; gap: 16px;">
+            <span>⚠ Payment not yet wired</span>
+            <span>⚠ No confirmation email</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Placeholder for next experiment -->
+      <div style="background: var(--warm); border-radius: 12px; padding: 24px; border: 2px dashed var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 180px; text-align: center;">
+        <div style="font-size: 28px; color: var(--border); margin-bottom: 12px;">+</div>
+        <div style="font-size: 13px; color: var(--muted); line-height: 1.6;">Next experiment<br>goes here</div>
+      </div>
+
+    </div>
+  </div>
+</div><!-- end tab-sandbox -->
+
 <div class="toast" id="toast"></div>
 
 <!-- Hidden form — registered with Netlify at deploy time -->
@@ -575,9 +615,10 @@
 <script>
 /* ── TAB SWITCHING ── */
 function switchTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', (i === 0 && tab === 'scoring') || (i === 1 && tab === 'slide')));
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', (i === 0 && tab === 'scoring') || (i === 1 && tab === 'slide') || (i === 2 && tab === 'sandbox')));
   document.getElementById('tab-scoring').classList.toggle('active', tab === 'scoring');
   document.getElementById('tab-slide').classList.toggle('active', tab === 'slide');
+  document.getElementById('tab-sandbox').classList.toggle('active', tab === 'sandbox');
 }
 
 /* ── DATA ── */
