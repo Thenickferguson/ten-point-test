@@ -557,6 +557,21 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- Hidden form — registered with Netlify at deploy time -->
+<form name="idea-scoring" netlify netlify-honeypot="bot-field" hidden>
+  <input type="hidden" name="form-name">
+  <input name="bot-field">
+  <input name="idea-name">
+  <input name="total">
+  <input name="verdict">
+  <input name="scored-at">
+  <input name="cc-score"><input name="cc-notes">
+  <input name="btb-score"><input name="btb-notes">
+  <input name="mm-score"><input name="mm-notes">
+  <input name="ff-score"><input name="ff-notes">
+  <input name="ss-score"><input name="ss-notes">
+</form>
+
 <script>
 /* ── TAB SWITCHING ── */
 function switchTab(tab) {
@@ -662,7 +677,20 @@ function addToSession() {
   const total = scores.reduce((a, b) => a + b, 0);
   const now = new Date();
   const checks = state.map(p => [...p]);
+  const verdict = getVerdict(total);
+  const scoredAt = now.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }) + ' ' + now.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' });
   session.push({ name, scores, checks, total, comments: [...comments], time: now.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' }), date: now.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }) });
+
+  const fd = new FormData();
+  fd.append('form-name', 'idea-scoring');
+  fd.append('idea-name', name);
+  fd.append('total', total);
+  fd.append('verdict', verdict.text);
+  fd.append('scored-at', scoredAt);
+  const shorts = ['cc','btb','mm','ff','ss'];
+  scores.forEach((s, i) => { fd.append(`${shorts[i]}-score`, s); fd.append(`${shorts[i]}-notes`, comments[i] || ''); });
+  fetch('/', { method: 'POST', body: fd }).catch(() => {});
+
   renderSession();
   resetAll();
   showToast(`"${name}" added to session.`);
