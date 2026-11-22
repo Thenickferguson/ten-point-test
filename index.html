@@ -92,6 +92,20 @@
   .idea-input::placeholder { color: rgba(26,18,8,0.2); }
   .idea-input:focus { border-color: var(--accent); }
 
+  .submitter-row { display: flex; gap: 24px; margin-top: 20px; flex-wrap: wrap; }
+  .submitter-field { flex: 1; min-width: 180px; }
+  .submitter-input {
+    width: 100%; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 300;
+    color: var(--ink); background: transparent; border: none;
+    border-bottom: 2px solid var(--border); padding: 6px 0 10px;
+    outline: none; transition: border-color 0.2s;
+  }
+  .submitter-input::placeholder { color: rgba(26,18,8,0.25); }
+  .submitter-input:focus { border-color: var(--accent); }
+  .submitter-input.invalid { border-color: #c0392b; }
+  .field-error { font-size: 11px; color: #c0392b; margin-top: 5px; display: none; }
+  .field-error.show { display: block; }
+
   .principles { padding: 24px 40px 0; display: flex; flex-direction: column; gap: 14px; }
   .principle-card {
     background: white; border-radius: 12px; overflow: hidden;
@@ -389,6 +403,17 @@
   <div class="idea-section wrap">
     <div class="field-label">Idea Name</div>
     <input class="idea-input" type="text" placeholder="Name the idea you're evaluating…" id="ideaInput">
+    <div class="submitter-row">
+      <div class="submitter-field">
+        <div class="field-label">Your Name</div>
+        <input class="submitter-input" type="text" id="submitterName" placeholder="First and last name" autocomplete="name">
+      </div>
+      <div class="submitter-field">
+        <div class="field-label">Your Email</div>
+        <input class="submitter-input" type="email" id="submitterEmail" placeholder="you@example.com" autocomplete="email" inputmode="email">
+        <div class="field-error" id="emailError">Please enter a valid email address.</div>
+      </div>
+    </div>
   </div>
 
   <div class="principles wrap" id="principles"></div>
@@ -410,6 +435,7 @@
   <div class="actions wrap">
     <button class="btn-primary" onclick="addToSession()">+ Add to Session</button>
     <button class="btn-secondary" onclick="resetAll()">↺ Reset</button>
+    <button class="btn-secondary" onclick="adminExport()" title="Admin only">⬇ Export Log</button>
   </div>
 
   <div class="session-section wrap" id="sessionSection" style="display:none">
@@ -424,6 +450,7 @@
       <table class="session-table">
         <thead>
           <tr>
+            <th>Submitted by</th>
             <th>Idea</th>
             <th style="text-align:center">CC</th>
             <th style="text-align:center">BTB</th>
@@ -601,6 +628,8 @@
 <form name="idea-scoring" netlify netlify-honeypot="bot-field" hidden>
   <input type="hidden" name="form-name">
   <input name="bot-field">
+  <input name="submitter-name">
+  <input name="submitter-email">
   <input name="idea-name">
   <input name="total">
   <input name="verdict">
@@ -708,22 +737,48 @@ function resetAll() {
   state.forEach(p => { p[0] = false; p[1] = false; });
   comments.forEach((_, i) => { comments[i] = ''; });
   document.getElementById('ideaInput').value = '';
+  document.getElementById('submitterName').value = '';
+  document.getElementById('submitterEmail').value = '';
+  document.getElementById('submitterEmail').classList.remove('invalid');
+  document.getElementById('emailError').classList.remove('show');
   render();
+}
+
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
 }
 
 function addToSession() {
   const name = document.getElementById('ideaInput').value.trim();
+  const submitterName = document.getElementById('submitterName').value.trim();
+  const submitterEmail = document.getElementById('submitterEmail').value.trim();
+  const emailInput = document.getElementById('submitterEmail');
+  const emailError = document.getElementById('emailError');
+
   if (!name) { showToast('Please enter an idea name first.'); return; }
+
+  // Email validation — required and must be well-formed
+  if (!submitterEmail || !isValidEmail(submitterEmail)) {
+    emailInput.classList.add('invalid');
+    emailError.classList.add('show');
+    emailInput.focus();
+    return;
+  }
+  emailInput.classList.remove('invalid');
+  emailError.classList.remove('show');
+
   const scores = state.map(p => p.filter(Boolean).length);
   const total = scores.reduce((a, b) => a + b, 0);
   const now = new Date();
   const checks = state.map(p => [...p]);
   const verdict = getVerdict(total);
   const scoredAt = now.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }) + ' ' + now.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' });
-  session.push({ name, scores, checks, total, comments: [...comments], time: now.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' }), date: now.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }) });
+  session.push({ name, submitterName, submitterEmail, scores, checks, total, comments: [...comments], time: now.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' }), date: now.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }) });
 
   const fd = new FormData();
   fd.append('form-name', 'idea-scoring');
+  fd.append('submitter-name', submitterName);
+  fd.append('submitter-email', submitterEmail);
   fd.append('idea-name', name);
   fd.append('total', total);
   fd.append('verdict', verdict.text);
@@ -731,6 +786,7 @@ function addToSession() {
   const shorts = ['cc','btb','mm','ff','ss'];
   scores.forEach((s, i) => { fd.append(`${shorts[i]}-score`, s); fd.append(`${shorts[i]}-notes`, comments[i] || ''); });
   fetch('/', { method: 'POST', body: fd }).catch(() => {});
+  appendToLog(session[session.length - 1]);
 
   renderSession();
   resetAll();
@@ -750,6 +806,7 @@ function renderSession() {
     const pCells = item.scores.map(s => `<td class="principle-cell ${s===2?'full':s===1?'half':''}">${s}</td>`).join('');
     const notesCells = item.comments.map(c => `<td class="principle-cell" style="font-size:12px;color:var(--muted);text-align:left;max-width:120px" title="${c.replace(/"/g,'&quot;')}">${c ? '📝 ' + (c.length > 30 ? c.slice(0,30) + '…' : c) : ''}</td>`).join('');
     return `<tr>
+      <td style="font-size:13px;color:var(--muted)">${item.submitterName || '—'}<br><span style="font-size:11px;opacity:0.6">${item.submitterEmail || ''}</span></td>
       <td class="idea-cell">${item.name}</td>
       ${pCells}
       <td class="score-cell" style="color:${scoreColor}">${item.total}</td>
@@ -769,11 +826,11 @@ function renderSession() {
 
 function exportCSV() {
   if (session.length === 0) return;
-  const headers = ['Idea','CC /2','BTB /2','MM /2','FF /2','SS /2','Total /10','Verdict','Time','CC Notes','BTB Notes','MM Notes','FF Notes','SS Notes'];
+  const headers = ['Submitted By','Email','Idea','CC /2','BTB /2','MM /2','FF /2','SS /2','Total /10','Verdict','Time','CC Notes','BTB Notes','MM Notes','FF Notes','SS Notes'];
   const rows = session.map(item => {
     const verdict = getVerdict(item.total);
-    const notesCols = item.comments.map(c => `"${c.replace(/"/g,'""')}"`);
-    return [`"${item.name}"`, ...item.scores, item.total, `"${verdict.text}"`, `"${item.time}"`, ...notesCols].join(',');
+    const notesCols = (item.comments || []).map(c => `"${(c||'').replace(/"/g,'""')}"`);
+    return [`"${item.submitterName||''}"`, `"${item.submitterEmail||''}"`, `"${item.name}"`, ...item.scores, item.total, `"${verdict.text}"`, `"${item.time}"`, ...notesCols].join(',');
   });
   const csv = [headers.join(','), ...rows].join('\n');
   const blob = new Blob([csv], { type: 'text/csv' });
@@ -857,6 +914,39 @@ function printIdea(i) {
   w.document.write(html);
   w.document.close();
   w.onload = () => { w.focus(); w.print(); };
+}
+
+/* ── PERSISTENT LOG (localStorage) ── */
+const ADMIN_PASS = 'moorooka2026';
+const LOG_KEY = 'tpt_idea_log';
+
+function appendToLog(item) {
+  const log = JSON.parse(localStorage.getItem(LOG_KEY) || '[]');
+  log.push(item);
+  localStorage.setItem(LOG_KEY, JSON.stringify(log));
+}
+
+function adminExport() {
+  const pass = prompt('Admin password:');
+  if (pass !== ADMIN_PASS) { showToast('Incorrect password.'); return; }
+  const log = JSON.parse(localStorage.getItem(LOG_KEY) || '[]');
+  if (log.length === 0) { showToast('No ideas in the log yet.'); return; }
+  const shorts = ['CC','BTB','MM','FF','SS'];
+  const headers = ['Date','Time','Submitted By','Email','Idea','CC /2','BTB /2','MM /2','FF /2','SS /2','Total /10','Verdict','CC Notes','BTB Notes','MM Notes','FF Notes','SS Notes'];
+  const rows = log.map(item => {
+    const verdict = getVerdict(item.total);
+    const notesCols = (item.comments || Array(5).fill('')).map(c => `"${(c||'').replace(/"/g,'""')}"`);
+    return [`"${item.date||''}"`, `"${item.time||''}"`, `"${item.submitterName||''}"`, `"${item.submitterEmail||''}"`, `"${item.name}"`, ...(item.scores||[0,0,0,0,0]), item.total, `"${verdict.text}"`, ...notesCols].join(',');
+  });
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `moorooka-ideas-log-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast(`Exported ${log.length} idea${log.length !== 1 ? 's' : ''} from the log.`);
 }
 
 function showToast(msg) {
