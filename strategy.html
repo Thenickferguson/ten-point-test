@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2027 Strategy Reference · The Clubhouse Moorooka</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --ink2: #2d2d44;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --bg: #f9fafb;
+    --white: #ffffff;
+    --green: #2d6a4f;
+    --green-light: #d1fae5;
+    --gold: #c9973a;
+    --gold-light: #fef3c7;
+    --red: #991b1b;
+    --red-light: #fee2e2;
+    --blue: #1e3a5f;
+    --blue-light: #dbeafe;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+  }
+
+  /* Header */
+  .site-header {
+    background: var(--ink);
+    color: white;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .site-header .brand {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+  .site-header .back-link {
+    color: rgba(255,255,255,0.65);
+    text-decoration: none;
+    font-size: 13px;
+  }
+  .site-header .back-link:hover { color: white; }
+
+  /* Hero */
+  .hero {
+    background: var(--ink2);
+    color: white;
+    padding: 48px 24px 40px;
+    text-align: center;
+  }
+  .hero .eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 10px;
+  }
+  .hero h1 {
+    font-size: clamp(24px, 5vw, 36px);
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .hero p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.7);
+    max-width: 540px;
+    margin: 0 auto;
+  }
+
+  /* Nav */
+  .section-nav {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 0 16px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .section-nav a {
+    display: inline-block;
+    padding: 14px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+  }
+  .section-nav a:hover { color: var(--ink); border-color: var(--ink); }
+
+  /* Content */
+  .content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+
+  .section {
+    margin-bottom: 56px;
+    scroll-margin-top: 56px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-header .icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+  .section-header h2 {
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .section-header .sub {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  /* Pillars */
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .pillar {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .pillar .pillar-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+    color: var(--blue);
+  }
+  .pillar ul {
+    list-style: none;
+    padding: 0;
+  }
+  .pillar li {
+    font-size: 13px;
+    padding: 5px 0;
+    padding-left: 16px;
+    position: relative;
+    color: var(--ink);
+    border-bottom: 1px solid var(--border);
+  }
+  .pillar li:last-child { border-bottom: none; }
+  .pillar li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--muted);
+    font-size: 11px;
+    top: 6px;
+  }
+
+  /* Stats grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-card .value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+  .stat-card .label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .stat-card.green .value { color: var(--green); }
+  .stat-card.gold .value { color: var(--gold); }
+
+  /* Financial table */
+  .fin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .fin-table th {
+    background: var(--ink);
+    color: white;
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+  .fin-table td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink);
+  }
+  .fin-table tr:last-child td { border-bottom: none; }
+  .fin-table tr.total-row td {
+    font-weight: 700;
+    background: var(--bg);
+  }
+  .fin-table tr.section-row td {
+    font-weight: 600;
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: #f3f4f6;
+    padding: 6px 14px;
+  }
+  .fin-table .num { text-align: right; }
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+  .badge.up { background: var(--green-light); color: var(--green); }
+  .badge.down { background: var(--red-light); color: var(--red); }
+  .badge.watch { background: var(--gold-light); color: var(--gold); }
+
+  /* Grants table */
+  .grants-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .grants-table th {
+    background: var(--green);
+    color: white;
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+  .grants-table td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .grants-table tr:last-child td { border-bottom: none; }
+  .grants-table .amount { font-weight: 700; color: var(--green); }
+  .status-pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+  .status-pill.done { background: var(--green-light); color: var(--green); }
+  .status-pill.pending { background: var(--gold-light); color: var(--gold); }
+
+  /* Projections */
+  .scenarios {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+  }
+  .scenario {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+  }
+  .scenario .scenario-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+  .scenario .scenario-label.low { color: #6b7280; }
+  .scenario .scenario-label.medium { color: var(--gold); }
+  .scenario .scenario-label.high { color: var(--green); }
+  .scenario .scenario-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .scenario .scenario-note {
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  /* Achievements */
+  .achievements {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 500px) { .achievements { grid-template-columns: 1fr; } }
+  .achievement {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .achievement .ach-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .achievement .ach-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .achievement .ach-detail {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* Promises table */
+  .promises-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .promises-table th {
+    background: var(--blue);
+    color: white;
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+  .promises-table td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .promises-table tr:last-child td { border-bottom: none; }
+
+  .notice {
+    background: white;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--gold);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: var(--ink2);
+    margin-top: 16px;
+  }
+  .notice strong { font-weight: 600; }
+
+  .source-note {
+    margin-top: 56px;
+    padding: 16px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand">The Clubhouse Moorooka</div>
+  <a href="/" class="back-link">← Back to Ten Point Test</a>
+</header>
+
+<div class="hero">
+  <div class="eyebrow">AGM 2026 · Reference Document</div>
+  <h1>2027 Strategy Reference</h1>
+  <p>Key numbers, focus areas, and context from our AGM to inform the 2027 plan.</p>
+</div>
+
+<nav class="section-nav">
+  <a href="#focus">2027 Focus</a>
+  <a href="#finances">Finances</a>
+  <a href="#grants">Grants</a>
+  <a href="#projections">Projections</a>
+  <a href="#achievements">2026 Wins</a>
+  <a href="#promises">Commitments</a>
+</nav>
+
+<div class="content">
+
+  <!-- 2027 Focus -->
+  <section class="section" id="focus">
+    <div class="section-header">
+      <div class="icon" style="background:#dbeafe;">🎯</div>
+      <div>
+        <h2>2027 Focus Areas</h2>
+        <div class="sub">Three pillars to guide the new board's plan and budget</div>
+      </div>
+    </div>
+    <div class="pillars">
+      <div class="pillar">
+        <div class="pillar-title">Strong Foundations</div>
+        <ul>
+          <li>Set budgets, control margins and wages</li>
+          <li>Build a healthy safety net of profit</li>
+          <li>Grow functions, community nights and sponsorship</li>
+        </ul>
+      </div>
+      <div class="pillar">
+        <div class="pillar-title">A Better Place</div>
+        <ul>
+          <li>Install the shade project</li>
+          <li>Skilled Works: 21 weeks of facility upgrades</li>
+          <li>Plan kitchen and futsal turf upgrades</li>
+        </ul>
+      </div>
+      <div class="pillar">
+        <div class="pillar-title">People &amp; Programs</div>
+        <ul>
+          <li>Build volunteers and grow membership</li>
+          <li>Launch the 12-month events calendar</li>
+          <li>Deliver 2026–27 programs</li>
+        </ul>
+      </div>
+    </div>
+    <div class="notice">
+      <strong>Note:</strong> The new board will turn these into signed-off goals and a budget by January 2027.
+    </div>
+  </section>
+
+  <!-- Finances -->
+  <section class="section" id="finances">
+    <div class="section-header">
+      <div class="icon" style="background:#d1fae5;">💰</div>
+      <div>
+        <h2>Financial Snapshot</h2>
+        <div class="sub">Board year Nov 2025–Oct 2026 (excl. GST)</div>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="value">$652k</div>
+        <div class="label">Total income</div>
+      </div>
+      <div class="stat-card">
+        <div class="value">$633k</div>
+        <div class="label">Total expenses</div>
+      </div>
+      <div class="stat-card green">
+        <div class="value">$19k</div>
+        <div class="label">Net profit</div>
+      </div>
+      <div class="stat-card green">
+        <div class="value">$89k</div>
+        <div class="label">Members' funds (up from $30k)</div>
+      </div>
+      <div class="stat-card">
+        <div class="value">$12.8k</div>
+        <div class="label">Avg weekly revenue (↑17%)</div>
+      </div>
+      <div class="stat-card gold">
+        <div class="value">84%</div>
+        <div class="label">Bar as % of income</div>
+      </div>
+    </div>
+
+    <table class="fin-table">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th class="num">2025</th>
+          <th class="num">2026</th>
+          <th class="num">Change</th>
+          <th>Story</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="section-row"><td colspan="5">Income</td></tr>
+        <tr>
+          <td>Total received</td>
+          <td class="num">$582k</td>
+          <td class="num">$652k</td>
+          <td class="num"><span class="badge up">+12%</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Bar &amp; trading sales</td>
+          <td class="num">$489k</td>
+          <td class="num">$560k</td>
+          <td class="num"><span class="badge up">+15%</span></td>
+          <td>Bookings and functions growth</td>
+        </tr>
+        <tr>
+          <td>Memberships</td>
+          <td class="num">$14k</td>
+          <td class="num">$19k</td>
+          <td class="num"><span class="badge up">+36%</span></td>
+          <td>Strong membership growth</td>
+        </tr>
+        <tr>
+          <td>Room hire</td>
+          <td class="num">$45k</td>
+          <td class="num">$48k</td>
+          <td class="num"><span class="badge up">+7%</span></td>
+          <td>New hire partners coming 2027</td>
+        </tr>
+        <tr class="section-row"><td colspan="5">Expenses</td></tr>
+        <tr>
+          <td>Total spent</td>
+          <td class="num">$567k</td>
+          <td class="num">$633k</td>
+          <td class="num"><span class="badge watch">+12%</span></td>
+          <td>Closely aligned with income growth</td>
+        </tr>
+        <tr>
+          <td>Wages &amp; super</td>
+          <td class="num">$191k</td>
+          <td class="num">$228k</td>
+          <td class="num"><span class="badge watch">+19%</span></td>
+          <td>Trading went up, so did running costs</td>
+        </tr>
+        <tr>
+          <td>Cost of goods</td>
+          <td class="num">$183k</td>
+          <td class="num">$217k</td>
+          <td class="num"><span class="badge watch">+19%</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Electricity</td>
+          <td class="num">$23k</td>
+          <td class="num">$29k</td>
+          <td class="num"><span class="badge down">+26%</span></td>
+          <td>Potential for battery or more solar</td>
+        </tr>
+        <tr>
+          <td>Insurance</td>
+          <td class="num">$43k</td>
+          <td class="num">$45k</td>
+          <td class="num"><span class="badge watch">+5%</span></td>
+          <td>Stable but a major ongoing cost</td>
+        </tr>
+        <tr>
+          <td>Repairs &amp; replacements</td>
+          <td class="num">$38k</td>
+          <td class="num">$23k</td>
+          <td class="num"><span class="badge up">−39%</span></td>
+          <td>Air-con grant eliminated 2025 spike</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Grants -->
+  <section class="section" id="grants">
+    <div class="section-header">
+      <div class="icon" style="background:#d1fae5;">📋</div>
+      <div>
+        <h2>Grants &amp; Major Funding</h2>
+        <div class="sub">Active and incoming as at AGM Nov 2026</div>
+      </div>
+    </div>
+
+    <table class="grants-table">
+      <thead>
+        <tr>
+          <th>Grant</th>
+          <th>Amount</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Shade project (Federal)</td>
+          <td class="amount">$100,000 + GST</td>
+          <td><span class="status-pill pending">Install early 2027</span></td>
+        </tr>
+        <tr>
+          <td>Air conditioning (State)</td>
+          <td class="amount">$96,405</td>
+          <td><span class="status-pill done">Installed Jul–Aug 2026</span></td>
+        </tr>
+        <tr>
+          <td>Ubuntu Foundation</td>
+          <td class="amount">$31,000</td>
+          <td><span class="status-pill pending">Held for 2027 programs</span></td>
+        </tr>
+        <tr>
+          <td>Security lighting (BCC Safer Suburbs)</td>
+          <td class="amount">$7,425 + GST</td>
+          <td><span class="status-pill done">Delivered</span></td>
+        </tr>
+        <tr>
+          <td>Ride-on mower (BCC)</td>
+          <td class="amount">$6,275</td>
+          <td><span class="status-pill pending">Purchased, not delivered</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="notice">
+      Ubuntu Foundation $31k is held for the Volunteer Celebration, Youth Program, and Women in Moorooka Lunch — all in 2027. SportUp adds $45k/year (Tue–Thu, aiming Mon–Fri); Coin Collectors and Toy Library add $11.4k/year from 2027.
+    </div>
+  </section>
+
+  <!-- Projections -->
+  <section class="section" id="projections">
+    <div class="section-header">
+      <div class="icon" style="background:#fef3c7;">📈</div>
+      <div>
+        <h2>2027 Surplus Projections</h2>
+        <div class="sub">Three scenarios for surplus before grants (Dec–Nov)</div>
+      </div>
+    </div>
+    <div class="scenarios">
+      <div class="scenario">
+        <div class="scenario-label low">Low Growth</div>
+        <div class="scenario-desc">Make a 10% profit from the additional rentals secured for 2027. Weekly profit stays flat.</div>
+        <div class="scenario-note">Watch months: February and August</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-label medium">Medium Growth</div>
+        <div class="scenario-desc">Grow weekly profit by 17% (same as 2026), plus make a 25% profit on additional rentals.</div>
+        <div class="scenario-note">+$56k additional rent secured</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-label high">High Growth</div>
+        <div class="scenario-desc">Grow weekly profit by 25% and make a 100% profit from additional rentals.</div>
+        <div class="scenario-note">Average weekly profit: $230–$365</div>
+      </div>
+    </div>
+    <div class="notice">
+      Bar income is currently 84% of total revenue. The $56k of additional rent secured for 2027 is the main lever for diversifying income.
+    </div>
+  </section>
+
+  <!-- 2026 Achievements -->
+  <section class="section" id="achievements">
+    <div class="section-header">
+      <div class="icon" style="background:#d1fae5;">✅</div>
+      <div>
+        <h2>2026 Achievements</h2>
+        <div class="sub">What we delivered — context for the 2027 plan</div>
+      </div>
+    </div>
+    <div class="achievements">
+      <div class="achievement">
+        <div class="ach-icon">💡</div>
+        <div>
+          <div class="ach-title">Ten Point Test &amp; Growth Committee</div>
+          <div class="ach-detail">A clear filter for every new idea, launched Feb–Mar 2026</div>
+        </div>
+      </div>
+      <div class="achievement">
+        <div class="ach-icon">🏗️</div>
+        <div>
+          <div class="ach-title">New Air Conditioning</div>
+          <div class="ach-detail">$100k replacement, delivered and running Jul–Aug 2026</div>
+        </div>
+      </div>
+      <div class="achievement">
+        <div class="ach-icon">🌳</div>
+        <div>
+          <div class="ach-title">Front Entrance &amp; Security Lighting</div>
+          <div class="ach-detail">$7.5k Safer Suburbs grant, volunteers and lights working</div>
+        </div>
+      </div>
+      <div class="achievement">
+        <div class="ach-icon">🤝</div>
+        <div>
+          <div class="ach-title">Ubuntu Foundation Partnership</div>
+          <div class="ach-detail">$31k for volunteers, youth, women in Moorooka — 3-year support</div>
+        </div>
+      </div>
+      <div class="achievement">
+        <div class="ach-icon">🎟️</div>
+        <div>
+          <div class="ach-title">Two-Tier Membership</div>
+          <div class="ach-detail">New model built to grow and welcome members, live 2026</div>
+        </div>
+      </div>
+      <div class="achievement">
+        <div class="ach-icon">🛡️</div>
+        <div>
+          <div class="ach-title">Risk Framework &amp; Incident Reporting</div>
+          <div class="ach-detail">Every risk rated, owned and escalated; QR incident reporting</div>
+        </div>
+      </div>
+      <div class="achievement">
+        <div class="ach-icon">🚜</div>
+        <div>
+          <div class="ach-title">Ride-On Mower Grant</div>
+          <div class="ach-detail">$6,275 from Lord Mayor's Better Suburbs, Oct 2026</div>
+        </div>
+      </div>
+      <div class="achievement">
+        <div class="ach-icon">🏢</div>
+        <div>
+          <div class="ach-title">Three New Hire Partners</div>
+          <div class="ach-detail">SportUp $45k/yr, Coin Collectors &amp; Toy Library $11.4k/yr from 2027</div>
+        </div>
+      </div>
+      <div class="achievement">
+        <div class="ach-icon">🎓</div>
+        <div>
+          <div class="ach-title">Youth Program</div>
+          <div class="ach-detail">Subcommittee formed, survey out; test &amp; learn late 2026 / early 2027</div>
+        </div>
+      </div>
+      <div class="achievement">
+        <div class="ach-icon">🎪</div>
+        <div>
+          <div class="ach-title">10+ Events Delivered</div>
+          <div class="ach-detail">Octoberish Fest (300), Outdoor Cinema (450), BPAC (300–400) and more</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2025 Promises -->
+  <section class="section" id="promises">
+    <div class="section-header">
+      <div class="icon" style="background:#dbeafe;">📝</div>
+      <div>
+        <h2>2025 Commitments — Where They Landed</h2>
+        <div class="sub">What we promised at AGM 2025 and what happened</div>
+      </div>
+    </div>
+    <table class="promises-table">
+      <thead>
+        <tr>
+          <th>Commitment</th>
+          <th>Pillar</th>
+          <th>Outcome</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Set grant targets</td>
+          <td>Financial stability</td>
+          <td><span class="badge up">Done — 4 new grants</span></td>
+        </tr>
+        <tr>
+          <td>Automated booking system</td>
+          <td>Momentum &amp; systems</td>
+          <td><span class="badge up">Done — live</span></td>
+        </tr>
+        <tr>
+          <td>Two-tier membership model</td>
+          <td>Membership growth</td>
+          <td><span class="badge up">Done</span></td>
+        </tr>
+        <tr>
+          <td>Clear board and subcommittee structure</td>
+          <td>Momentum &amp; systems</td>
+          <td><span class="badge up">Done — 2 subcommittees</span></td>
+        </tr>
+        <tr>
+          <td>Enhance compliance and procedures</td>
+          <td>Momentum &amp; systems</td>
+          <td><span class="badge up">Done — risk + QR reporting</span></td>
+        </tr>
+        <tr>
+          <td>Grow revenue outside the bar</td>
+          <td>Financial stability</td>
+          <td><span class="badge watch">Underway — early 2027</span></td>
+        </tr>
+        <tr>
+          <td>Hire partners (3 new)</td>
+          <td>Financial stability</td>
+          <td><span class="badge up">Done</span></td>
+        </tr>
+        <tr>
+          <td>Pay off outstanding debts</td>
+          <td>Financial stability</td>
+          <td><span class="badge up">Done — loans cleared</span></td>
+        </tr>
+        <tr>
+          <td>12-month events calendar</td>
+          <td>Clubhouse improvements</td>
+          <td><span class="badge watch">Underway — 2027 in draft</span></td>
+        </tr>
+        <tr>
+          <td>Quarterly community feedback sessions</td>
+          <td>Membership growth</td>
+          <td><span class="badge watch">Underway — 1 held so far</span></td>
+        </tr>
+        <tr>
+          <td>Outdoor shade space redevelopment</td>
+          <td>Clubhouse improvements</td>
+          <td><span class="badge watch">Carried — install early 2027</span></td>
+        </tr>
+        <tr>
+          <td>Kitchen upgrades via grants</td>
+          <td>Clubhouse improvements</td>
+          <td><span class="badge watch">Carried into 2027</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="source-note">
+    Source: AGM 2026 presentation · Third Place Group Inc. · Sunday 22 November 2026 ·
+    Treasurer: Rachel Madden · President: Nick Morrison ·
+    <a href="/" style="color:inherit;">clubhousemoorookatpt.netlify.app</a>
+  </div>
+
+</div>
+</body>
+</html>
